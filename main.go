@@ -8,7 +8,11 @@ import (
 	"bytes"
 	"github.com/op/go-logging"
 	"os"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
+
+var local = kingpin.Arg("local", "Running locally?").Bool()
+
 var format = logging.MustStringFormatter(
 	`%{color}%{time:15:04:05.000} %{pid} %{longfunc} ▶ %{level:.4s} %{id:03x} %{message}`,
 )
@@ -27,6 +31,8 @@ type Result struct{
 }
 
 func main(){
+
+	kingpin.Parse()
 
 	backend1 := logging.NewLogBackend(os.Stderr, "", 0)
 	backend1Formatter := logging.NewBackendFormatter(backend1, format)
@@ -100,6 +106,9 @@ func Listen() {
 
 	e.POST("/", Recivejob)
 	e.POST("result/", Reciveres)
-	e.Start(":7000")
-
+	if *local {
+		e.Start(":7000")
+	} else {
+		e.Start(":8000")
+	}
 }
