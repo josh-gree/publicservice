@@ -79,7 +79,7 @@ func SendSumjob(d []float64) error {
 	if *local {
 		sumhost = "localhost:8000"
 	} else {
-		sumhost = fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+		sumhost = fmt.Sprintf("%s:8000","sumservice")
 	}
 	_, err = http.Post(fmt.Sprintf("http://%s/",sumhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
@@ -100,7 +100,7 @@ func SendProdjob(d []float64) error {
 	if *local {
 		prodhost = "localhost:9000"
 	} else {
-		prodhost = fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+		prodhost = fmt.Sprintf("%s:8000","prodservice")
 	}
 	_, err = http.Post(fmt.Sprintf("http://%s",prodhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
@@ -113,6 +113,9 @@ func SendProdjob(d []float64) error {
 func Listen() {
 	logg.Info("Starting to Listen: public")
 	e := echo.New()
+
+	fmt.Printf("%s:8000",serviceLocations["sum"])
+	fmt.Printf("%s:8000",serviceLocations["prod"])
 
 	e.POST("/", Recivejob)
 	e.POST("result/", Reciveres)
