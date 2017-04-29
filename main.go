@@ -18,7 +18,7 @@ var format = logging.MustStringFormatter(
 )
 var logg = logging.MustGetLogger("example")
 
-var serviceLocations = map[string]string{"sum":"n2","prod":"n1"}
+var serviceLocations = map[string]string{"sum":"sumservice","prod":"prodservice"}
 var FuncMap  = map[string]func([]float64)error{"sum":SendSumjob,"prod":SendProdjob}
 
 type Job struct{
@@ -75,8 +75,12 @@ func SendSumjob(d []float64) error {
 		logg.Error(err)
 		return err
 	}
-	sumhost := "8000"
-	_, err = http.Post(fmt.Sprintf("http://localhost:%s/",sumhost),"application/json",bytes.NewBuffer(data))
+	if *local {
+		publichost := "localhost:8000"
+	} else {
+		publichost := fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+	}
+	_, err = http.Post(fmt.Sprintf("http://%s/",sumhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
 		logg.Error(err)
 		return err
@@ -91,8 +95,12 @@ func SendProdjob(d []float64) error {
 		logg.Error(err)
 		return err
 	}
-	prodhost := "9000"
-	_, err = http.Post(fmt.Sprintf("http://localhost:%s/",prodhost),"application/json",bytes.NewBuffer(data))
+	if *local {
+		publichost := "localhost:9000"
+	} else {
+		publichost := fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+	}
+	_, err = http.Post(fmt.Sprintf("http://%s",prodhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
 		logg.Error(err)
 		return err
