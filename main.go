@@ -75,10 +75,11 @@ func SendSumjob(d []float64) error {
 		logg.Error(err)
 		return err
 	}
+	sumhost := ""
 	if *local {
-		publichost := "localhost:8000"
+		sumhost = "localhost:8000"
 	} else {
-		publichost := fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+		sumhost = fmt.Sprintf("%s:8000",serviceLocations[j.Service])
 	}
 	_, err = http.Post(fmt.Sprintf("http://%s/",sumhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
@@ -95,10 +96,11 @@ func SendProdjob(d []float64) error {
 		logg.Error(err)
 		return err
 	}
+	prodhost := ""
 	if *local {
-		publichost := "localhost:9000"
+		prodhost = "localhost:9000"
 	} else {
-		publichost := fmt.Sprintf("%s:8000",serviceLocations[j.Service])
+		prodhost = fmt.Sprintf("%s:8000",serviceLocations[j.Service])
 	}
 	_, err = http.Post(fmt.Sprintf("http://%s",prodhost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
